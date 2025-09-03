@@ -3,8 +3,8 @@ import requests
 from typing import List, Dict, Any
 from urllib.parse import quote
 
-CAREERONESTOP_USER_ID = os.environ.get("CAREERONESTOP_USER_ID")  # e.g., "YOURUSERID"
-CAREERONESTOP_API_KEY = os.environ.get("CAREERONESTOP_API_KEY")  # Bearer token
+CAREERONESTOP_USER_ID = os.environ.get("CAREERONESTOP_USER_ID")  
+CAREERONESTOP_API_KEY = os.environ.get("CAREERONESTOP_API_KEY")  
 
 def _format_courses(items) -> List[Dict[str, Any]]:
     out = []

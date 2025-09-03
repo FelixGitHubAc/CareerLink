@@ -4,7 +4,6 @@ from typing import List, Dict
 
 ADZUNA_APP_ID = os.environ.get("ADZUNA_APP_ID")
 ADZUNA_APP_KEY = os.environ.get("ADZUNA_APP_KEY")
-RAPIDAPI_KEY = os.environ.get("RAPIDAPI_KEY")  # for JSearch (RapidAPI)
 
 def _format_jobs(items) -> List[Dict]:
     out = []
@@ -26,27 +25,8 @@ def _format_jobs(items) -> List[Dict]:
     return out
 
 def search_jobs(query: str, location: str = "", limit: int = 5) -> List[Dict]:
-    """Search jobs using JSearch if RAPIDAPI_KEY set, otherwise Adzuna, otherwise demo data."""
-    # Prefer JSearch (RapidAPI)
-    if RAPIDAPI_KEY:
-        try:
-            params = {
-                "query": f"{query} {location}".strip(),
-                "page": "1",
-                "num_pages": "1"
-            }
-            headers = {
-                "X-RapidAPI-Key": RAPIDAPI_KEY,
-                "X-RapidAPI-Host": "jsearch.p.rapidapi.com"
-            }
-            r = requests.get("https://jsearch.p.rapidapi.com/search", headers=headers, params=params, timeout=12)
-            if r.ok:
-                data = r.json()
-                items = data.get("data", [])[:limit]
-                return _format_jobs(items)
-        except Exception:
-            pass
-
+    """Search jobs using Adzuna, otherwise demo data."""
+    
     # Fallback: Adzuna (requires app id/key)
     if ADZUNA_APP_ID and ADZUNA_APP_KEY:
         try:
@@ -72,9 +52,8 @@ def search_jobs(query: str, location: str = "", limit: int = 5) -> List[Dict]:
     print("ADZUNA_APP_KEY:", ADZUNA_APP_KEY)
     # ...existing code...
 
-    # Last resort: demo data
+    # demo data
     return [
         {"title": "Data Analyst (Entry Level)", "company": "Acme Corp", "location": "Remote (US)", "url": "#"},
         {"title": "Business Analyst", "company": "Globex", "location": "New York, NY", "url": "#"},
     ][:limit]
-# what is limit? 
