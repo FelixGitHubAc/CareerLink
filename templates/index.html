@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Career Coach Chatbot</title>
+  <link rel="stylesheet" href="/static/style.css" />
+</head>
+<body>
+  <div class="app">
+    <header>
+      <h1>Career Coach</h1>
+      <p class="muted">Ask about jobs, resumes, interviews, or skills.</p>
+    </header>
+
+    <main id="chat"></main>
+
+    <form id="composer">
+      <input id="message" type="text" placeholder="e.g., entry-level data analyst jobs in Austin" autocomplete="off" />
+      <button type="submit">Send</button>
+    </form>
+  </div>
+
+<script>
+const chat = document.getElementById('chat');
+const form = document.getElementById('composer');
+const input = document.getElementById('message');
+
+function bubble(html, who='bot') {
+  const div = document.createElement('div');
+  div.className = `bubble ${who}`;
+  div.innerHTML = html;
+  chat.appendChild(div);
+  chat.scrollTop = chat.scrollHeight;
+}
+
+function cardList(items, type='jobs') {
+  if (!items || !items.length) return '';
+  const cards = items.map(it => {
+    if (type === 'jobs') {
+      const loc = it.location ? `<div class="meta">${it.company} — ${it.location}</div>` : `<div class="meta">${it.company}</div>`;
+      const href = it.url || '#';
+      return `<a class="card" href="${href}" target="_blank" rel="noopener">
+        <div class="title">${it.title}</div>${loc}</a>`;
+    } else {
+      const place = [it.city, it.state].filter(Boolean).join(', ');
+      const href = it.url || '#';
+      return `<a class="card" href="${href}" target="_blank" rel="noopener">
+        <div class="title">${it.name}</div>
+        <div class="meta">${it.provider}${place ? ' — ' + place : ''}</div>
+      </a>`;
+    }
+  }).join('');
+  const label = type === 'jobs' ? 'Jobs' : 'Training';
+  return `<div class="cards"><div class="label">${label}</div>${cards}</div>`;
+}
+
+form.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const text = input.value.trim();
+  if (!text) return;
+
+  bubble(text, 'user');
+  input.value = '';
+
+  try {
+    const r = await fetch('/api/message', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({message: text})
+    });
+    const data = await r.json();
+    let html = data.reply ? data.reply.replace(/\n/g, '<br/>') : '…';
+    if (data.jobs && data.jobs.length) {
+      html += cardList(data.jobs, 'jobs');
+    }
+    if (data.courses && data.courses.length) {
+      html += cardList(data.courses, 'courses');
+    }
+    bubble(html, 'bot');
+  } catch (err) {
+    bubble('Sorry, something went wrong.', 'bot');
+  }
+});
+
+// Welcome message
+bubble("👋 I'm your career coach. Ask me for jobs, training, resume tips, interview prep, or salary ranges.");
+</script>
+</body>
+</html>
