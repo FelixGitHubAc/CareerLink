@@ -47,10 +47,10 @@ def search_jobs(query: str, location: str = "", limit: int = 5) -> List[Dict]:
         except Exception:
             pass
         
-        # ...existing code...
+
     print("ADZUNA_APP_ID:", ADZUNA_APP_ID)
     print("ADZUNA_APP_KEY:", ADZUNA_APP_KEY)
-    # ...existing code...
+
 
     # demo data
     return [
