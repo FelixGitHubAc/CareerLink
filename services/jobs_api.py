@@ -27,7 +27,7 @@ def _format_jobs(items) -> List[Dict]:
 def search_jobs(query: str, location: str = "", limit: int = 5) -> List[Dict]:
     """Search jobs using Adzuna, otherwise demo data."""
     
-    # Fallback: Adzuna (requires app id/key)
+    # Adzuna (requires app id/key)
     if ADZUNA_APP_ID and ADZUNA_APP_KEY:
         try:
             country = os.environ.get("ADZUNA_COUNTRY", "us")
