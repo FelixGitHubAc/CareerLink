@@ -23,7 +23,7 @@ def search_training(keyword: str, location: str, limit: int = 5, radius_miles: i
     if not CAREERONESTOP_API_KEY or not CAREERONESTOP_USER_ID:
         return []
     try:
-        # Build URL as per API Explorer route
+        # CareerOneStop Training API route template:
         # /v1/training/{userId}/{keyword}/{location}/{radius}/{occupation}/{programName}/{programLength}/{state}/{region}/{sortColumns}/{sortDirections}/{startRecord}/{limitRecord}
         path = f"/v1/training/{quote(CAREERONESTOP_USER_ID)}/{quote(keyword)}/{quote(location)}/{radius_miles}/0/0/0/0/0/0/0/0/{limit}"
         url = "https://api.careeronestop.org" + path
